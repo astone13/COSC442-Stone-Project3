@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>VendingMachineTest.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">edu.towson.cis.cosc442.project3.vendingmachine (Mar 3, 2017 3:46:57 PM)</a> &gt; <a href="../../index.html" class="el_group">VendingMachine2</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">edu.towson.cis.cosc442.project3.vendingmachine</a> &gt; <span class="el_source">VendingMachineTest.java</span></div><h1>VendingMachineTest.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.towson.cis.cosc442.project3.vendingmachine;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * @author AdamStone
+ *
+ */
+<span class="nc" id="L16">public class VendingMachineTest {</span>
+	
+	private VendingMachine vendingMachine;
+	private VendingMachineItem item;
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+<span class="nc" id="L26">		vendingMachine = new VendingMachine();</span>
+<span class="nc" id="L27">		item = new VendingMachineItem(&quot;Crunch Bar&quot;, 1.25);</span>
+<span class="nc" id="L28">	}</span>
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+<span class="nc" id="L35">		System.gc();</span>
+<span class="nc" id="L36">	}</span>
+
+	//Test that addItem adds item
+	@Test
+	public void addItemTest() {
+<span class="nc" id="L41">		vendingMachine.addItem(item,VendingMachine.A_CODE);</span>
+<span class="nc" id="L42">		assertEquals(item, vendingMachine.getItem(VendingMachine.A_CODE));</span>
+<span class="nc" id="L43">	}</span>
+	
+	//Test that addItem throws an exception when you add a duplicate item
+	@Test(expected=VendingMachineException.class)
+	public void addDuplicateItemTest() {
+<span class="nc" id="L48">		vendingMachine.addItem(item, VendingMachine.A_CODE);</span>
+<span class="nc" id="L49">		vendingMachine.addItem(item, VendingMachine.A_CODE);</span>
+<span class="nc" id="L50">	}</span>
+	
+	//Test that removeItem sets item to null
+	@Test
+	public void removeItemTest() {
+<span class="nc" id="L55">		vendingMachine.addItem(item,VendingMachine.A_CODE);</span>
+<span class="nc" id="L56">		vendingMachine.removeItem(VendingMachine.A_CODE);</span>
+<span class="nc" id="L57">		assertEquals(null, vendingMachine.getItem(VendingMachine.A_CODE));</span>
+<span class="nc" id="L58">	}</span>
+	
+	//Test that removeItem throws an exception if you try to remove a null item
+	@Test(expected=VendingMachineException.class)
+	public void removeNullItemTest() {
+<span class="nc" id="L63">		vendingMachine.removeItem(VendingMachine.A_CODE);</span>
+<span class="nc" id="L64">	}</span>
+	
+	//Test that insertMoney adds money to balance
+	@Test
+	public void insertMoneyTest() {
+<span class="nc" id="L69">		vendingMachine.insertMoney(10.00);</span>
+<span class="nc" id="L70">		assertEquals(10.00, vendingMachine.getBalance(), 0.001);</span>
+<span class="nc" id="L71">	}</span>
+	
+	//Test that insertMoney throws an exception if money &lt; zero
+	@Test(expected=VendingMachineException.class)
+	public void insertMoneyLessThanZeroTest() {
+<span class="nc" id="L76">		vendingMachine.insertMoney(-5.00);</span>
+<span class="nc" id="L77">	}</span>
+	
+	//Test that getBalance returns correct balance
+	@Test
+	public void getBalanceTest() {
+<span class="nc" id="L82">		assertEquals(0, vendingMachine.getBalance(), 0.001);</span>
+<span class="nc" id="L83">	}</span>
+	
+	//Test that makePurchase works
+	@Test
+	public void makePurchaseTest() {
+<span class="nc" id="L88">		vendingMachine.addItem(item,VendingMachine.A_CODE);</span>
+<span class="nc" id="L89">		vendingMachine.insertMoney(10.00);</span>
+<span class="nc" id="L90">		assertEquals(true, vendingMachine.makePurchase(VendingMachine.A_CODE));</span>
+<span class="nc" id="L91">		assertEquals(null, vendingMachine.getItem(VendingMachine.A_CODE));</span>
+<span class="nc" id="L92">		assertEquals(8.75, vendingMachine.getBalance(), 0.001);</span>
+<span class="nc" id="L93">	}</span>
+	
+	//Test that makePurchase fails when balance &lt; item price
+	@Test
+	public void makePurchaseInsufficientBalanceTest() {
+<span class="nc" id="L98">		vendingMachine.addItem(item,VendingMachine.A_CODE);</span>
+<span class="nc" id="L99">		vendingMachine.insertMoney(0.50);</span>
+<span class="nc" id="L100">		assertEquals(false, vendingMachine.makePurchase(VendingMachine.A_CODE));</span>
+<span class="nc" id="L101">	}</span>
+	
+	//Test that makePurchase fails when item == null
+	@Test
+	public void makePurchaseItemExistsTest() {
+<span class="nc" id="L106">		assertEquals(false, vendingMachine.makePurchase(VendingMachine.A_CODE));</span>
+<span class="nc" id="L107">	}</span>
+	
+	//Test that returnChange sets balance = 0 and returns the previous balance
+	@Test
+	public void returnChangeTest() {
+<span class="nc" id="L112">		vendingMachine.insertMoney(5.00);</span>
+<span class="nc" id="L113">		assertEquals(5.00, vendingMachine.returnChange(), 0.001);</span>
+<span class="nc" id="L114">		assertEquals(0, vendingMachine.getBalance(), 0.001);</span>
+<span class="nc" id="L115">	}</span>
+	
+	//Test to make sure that getSlotIndex returns the correct index
+	@Test
+	public void getSlotIndexTest() {
+<span class="nc" id="L120">		assertEquals(0, vendingMachine.getSlotIndex(VendingMachine.A_CODE));</span>
+<span class="nc" id="L121">		assertEquals(1, vendingMachine.getSlotIndex(VendingMachine.B_CODE));</span>
+<span class="nc" id="L122">		assertEquals(2, vendingMachine.getSlotIndex(VendingMachine.C_CODE));</span>
+<span class="nc" id="L123">		assertEquals(3, vendingMachine.getSlotIndex(VendingMachine.D_CODE));</span>
+<span class="nc" id="L124">	}</span>
+	
+	//Test that if you try to get the slot index of a code that doesn't exist, an exception is thrown
+	@Test(expected=VendingMachineException.class)
+	public void invalidSlotIndex() {
+<span class="nc" id="L129">		vendingMachine.getSlotIndex(&quot;50&quot;);</span>
+<span class="nc" id="L130">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span>edu.towson.cis.cosc442.project3.vendingmachine (Mar 3, 2017 3:46:57 PM)</div></body></html>
